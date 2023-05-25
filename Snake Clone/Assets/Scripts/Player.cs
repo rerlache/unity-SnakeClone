@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
         int y = ((int)Mathf.Round(snakeHead.transform.position.y));
         if (movingRight)
         {
-            if (x < 19)
+            if (x < 20)
             {
                 x++;
             }
@@ -96,7 +96,7 @@ public class Player : MonoBehaviour
         }
         else if (movingLeft)
         {
-            if (x > -19)
+            if (x > -20)
             {
                 x--;
             }
@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
         }
         else if (movingUp)
         {
-            if (y < 10)
+            if (y < 11)
             {
                 y++;
             }
@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
         }
         else if (movingDown)
         {
-            if (y > -10)
+            if (y > -11)
             {
                 y--;
             }
