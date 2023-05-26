@@ -14,7 +14,6 @@ public class UI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        allTimeHighscore = PlayerPrefs.GetInt("highscore",0);
     }
     void Update()
     {
@@ -28,6 +27,7 @@ public class UI : MonoBehaviour
         }
         if (GameManager.Instance.GameState == GameManager.State.GAMEOVER)
         {
+            allTimeHighscore = PlayerPrefs.GetInt("highscore", 0);
             if (Score.Instance.currentScore > allTimeHighscore)
             {
                 _gameOverText.text = string.Format("CONGRATS!<br><br>{0}<br>is your new Highscore!", Score.Instance.currentScore);
