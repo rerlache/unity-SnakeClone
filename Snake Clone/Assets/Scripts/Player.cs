@@ -25,25 +25,25 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetAxis("Horizontal") > 0)
+        if (Input.GetAxis("Horizontal") > 0 && !movingLeft)
         {
             movingRight = true;
             Snake.Instance.moveDir = 'r';
             movingDown = movingLeft = movingUp = false;
         }
-        else if (Input.GetAxis("Horizontal") < 0)
+        else if (Input.GetAxis("Horizontal") < 0 && !movingRight)
         {
             movingLeft = true;
             Snake.Instance.moveDir = 'l';
             movingDown = movingRight = movingUp = false;
         }
-        else if (Input.GetAxis("Vertical") > 0)
+        else if (Input.GetAxis("Vertical") > 0 && !movingDown)
         {
             movingUp = true;
             Snake.Instance.moveDir = 'u';
             movingDown = movingRight = movingLeft = false;
         }
-        else if (Input.GetAxis("Vertical") < 0)
+        else if (Input.GetAxis("Vertical") < 0 && !movingUp)
         {
             movingDown = true;
             Snake.Instance.moveDir = 'd';
