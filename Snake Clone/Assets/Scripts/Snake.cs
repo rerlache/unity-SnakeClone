@@ -9,6 +9,8 @@ public class Snake : MonoBehaviour
     public GameObject snakeHead;
     public int snakeLength = 3;
     public char moveDir;
+    public Vector3 headTurningPos;
+    public bool dirHasChanged;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,14 +19,14 @@ public class Snake : MonoBehaviour
         for (int i = 0; i < snakeLength; i++)
         {
             CreateNewBodyPartAndAdd(GetPositionFromPrevious(snakePartList[i].transform.position));
-            UpdateBodyPartPosition();
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        StartCoroutine(UpdateBodyPartPositionDelayed());
+        //UpdateBodyPartPosition();
     }
     void CreateNewBodyPartAndAdd(Vector3 newPos)
     {
@@ -34,7 +36,8 @@ public class Snake : MonoBehaviour
         newBodyPart.transform.position = newPos;
         snakePartList.Add(newBodyPart);
     }
-    public void StretchSnakeAfterEating(){
+    public void StretchSnakeAfterEating()
+    {
         snakeLength++;
         GameObject previousPart = snakePartList[snakePartList.Count - 1].gameObject;
         GameObject newBodyPart = CreateNewTile();
@@ -49,21 +52,41 @@ public class Snake : MonoBehaviour
         newTile.AddComponent<SphereCollider>();
         return newTile;
     }
-    public void UpdateBodyPartPosition()
+    void UpdateBodyPartPosition()
     {
         for (int i = 1; i < snakePartList.Count; i++)
         {
             Vector3 newPos = GetPositionFromPrevious(snakePartList[i - 1].transform.position);
+            if (dirHasChanged)
+            {
+                newPos.x--;
+                newPos.y--;
+                dirHasChanged = false;
+            }
             snakePartList[i].transform.position = newPos;
         }
     }
-    
+    IEnumerator UpdateBodyPartPositionDelayed()
+    {
+        for (int i = 1; i < snakePartList.Count; i++)
+        {
+            Vector3 newPos = GetPositionFromPrevious(snakePartList[i - 1].transform.position);
+            yield return new WaitForSeconds(Player.DELAYTIME);
+            if (dirHasChanged)
+            {
+                newPos.x--;
+                newPos.y--;
+                dirHasChanged = false;
+            }
+            snakePartList[i].transform.position = newPos;
+        }
+    }
     Vector3 GetPositionFromPrevious(Vector3 prevPosition)
     {
         int x = ((int)Mathf.Round(prevPosition.x));
         int y = ((int)Mathf.Round(prevPosition.y));
-        x = moveDir == 'r' ? x - 1 : moveDir =='l' ? x + 1 : x;
-        y = moveDir == 'u' ? y - 1 : moveDir == 'd' ? y + 1 : y;
+        x = moveDir == 'r' ? x-- : moveDir == 'l' ? x++ : x;
+        y = moveDir == 'u' ? y-- : moveDir == 'd' ? y++ : y;
         return new(x, y, 0);
     }
 }
