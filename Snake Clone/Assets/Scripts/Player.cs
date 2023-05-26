@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public static Player PlayerInstance { get; private set; }
     public int Score { get; set; }
     int highScore;
-    [SerializeField] List<GameObject> snakePartList;
+    
     static float DELAYTIME = .17f;
     public bool movingLeft;
     public bool movingRight = true;
@@ -16,20 +16,11 @@ public class Player : MonoBehaviour
     float timer;
     int inputCounter = 0;
     bool gameOver;
-    GameObject snakeHead;
-    int snakeLength = 3;
     Vector3 headTurningPos;
     void Start()
     {
         PlayerInstance = this;
         gameOver = false;
-        snakeHead = snakePartList[0];
-        Debug.Log(snakePartList.Count);
-        for (int i = 0; i < snakeLength; i++)
-        {
-            CreateNewBodyPartAndAdd(GetPositionFromPrevious(snakePartList[i].transform.position));
-            UpdateBodyPartPosition();
-        }
     }
 
     void Update()
@@ -37,28 +28,32 @@ public class Player : MonoBehaviour
         if (Input.GetAxis("Horizontal") > 0)
         {
             movingRight = true;
+            Snake.Instance.moveDir = 'r';
             movingDown = movingLeft = movingUp = false;
         }
         else if (Input.GetAxis("Horizontal") < 0)
         {
             movingLeft = true;
+            Snake.Instance.moveDir = 'l';
             movingDown = movingRight = movingUp = false;
         }
         else if (Input.GetAxis("Vertical") > 0)
         {
             movingUp = true;
+            Snake.Instance.moveDir = 'u';
             movingDown = movingRight = movingLeft = false;
         }
         else if (Input.GetAxis("Vertical") < 0)
         {
             movingDown = true;
+            Snake.Instance.moveDir = 'd';
             movingUp = movingRight = movingLeft = false;
         }
         if (inputCounter == 0 && !gameOver)
         {
             inputCounter = 1;
             StartCoroutine(TurnHeadDelayed());
-            UpdateBodyPartPosition();
+            Snake.Instance.UpdateBodyPartPosition();
         }
     }
     void FixedUpdate()
@@ -83,9 +78,9 @@ public class Player : MonoBehaviour
 
     IEnumerator TurnHeadDelayed()
     {
-        headTurningPos = snakeHead.transform.position;
-        int x = ((int)Mathf.Round(snakeHead.transform.position.x));
-        int y = ((int)Mathf.Round(snakeHead.transform.position.y));
+        headTurningPos = Snake.Instance.snakeHead.transform.position;
+        int x = ((int)Mathf.Round(Snake.Instance.snakeHead.transform.position.x));
+        int y = ((int)Mathf.Round(Snake.Instance.snakeHead.transform.position.y));
         if (movingRight)
         {
             if (x < 20)
@@ -124,45 +119,7 @@ public class Player : MonoBehaviour
     }
     void SetHeadPosition(Vector3 newPos)
     {
-        snakeHead.transform.position = newPos;
+        Snake.Instance.snakeHead.transform.position = newPos;
     }
-    void UpdateBodyPartPosition()
-    {
-        for (int i = 1; i < snakePartList.Count; i++)
-        {
-            Vector3 newPos = GetPositionFromPrevious(snakePartList[i - 1].transform.position);
-            snakePartList[i].transform.position = newPos;
-        }
-    }
-    public void CreateNewBodyPartAndAdd(Vector3 newPos)
-    {
-        GameObject previousPart = snakePartList[snakePartList.Count - 1].gameObject;
-        GameObject newBodyPart = CreateNewTile();
-        newBodyPart.transform.parent = transform;
-        newBodyPart.transform.position = newPos;
-        snakePartList.Add(newBodyPart);
-    }
-    public void StretchSnakeAfterEating(){
-        snakeLength++;
-        GameObject previousPart = snakePartList[snakePartList.Count - 1].gameObject;
-        GameObject newBodyPart = CreateNewTile();
-        newBodyPart.transform.parent = transform;
-        newBodyPart.transform.position = GetPositionFromPrevious(snakePartList[snakeLength - 1].transform.position);
-        snakePartList.Add(newBodyPart);
-    }
-    Vector3 GetPositionFromPrevious(Vector3 prevPosition)
-    {
-        int x = ((int)Mathf.Round(prevPosition.x));
-        int y = ((int)Mathf.Round(prevPosition.y));
-        x = movingRight ? x - 1 : movingLeft ? x + 1 : x;
-        y = movingUp ? y - 1 : movingDown ? y + 1 : y;
-        return new(x, y, 0);
-    }
-    GameObject CreateNewTile()
-    {
-        GameObject newTile = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        newTile.transform.localScale += new Vector3(0, 0, -0.5f);
-        newTile.AddComponent<BoxCollider>();
-        return newTile;
-    }
+    
 }

@@ -14,7 +14,7 @@ public class Food : MonoBehaviour
             x = Random.Range(-19, 19);
             y = Random.Range(-10, 10);
             transform.position = new Vector3(x, y, z);
-            Player.PlayerInstance.StretchSnakeAfterEating();
+            Snake.Instance.StretchSnakeAfterEating();
             Player.PlayerInstance.Score += 5;
             Debug.Log("Score: " + Player.PlayerInstance.Score);
         }
