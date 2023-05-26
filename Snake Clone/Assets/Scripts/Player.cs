@@ -4,58 +4,59 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static Player PlayerInstance { get; private set; }
+    public static Player Instance { get; private set; }
     public static float DELAYTIME = .17f;
-    public int Score { get; set; }
-    int highScore;
-    
     bool movingLeft;
-    bool movingRight = true;
+    public bool movingRight;
     bool movingUp;
     bool movingDown;
     float timer;
     int inputCounter = 0;
-    bool gameOver;
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
-        PlayerInstance = this;
-        gameOver = false;
     }
 
     void Update()
     {
-        if (Input.GetAxis("Horizontal") > 0 && !movingLeft)
+        if (GameManager.Instance.GameState == GameManager.State.PLAY)
         {
-            movingRight = true;
-            Snake.Instance.moveDir = 'r';
-            Snake.Instance.dirHasChanged = true;
-            movingDown = movingLeft = movingUp = false;
-        }
-        else if (Input.GetAxis("Horizontal") < 0 && !movingRight)
-        {
-            movingLeft = true;
-            Snake.Instance.moveDir = 'l';
-            Snake.Instance.dirHasChanged = true;
-            movingDown = movingRight = movingUp = false;
-        }
-        else if (Input.GetAxis("Vertical") > 0 && !movingDown)
-        {
-            movingUp = true;
-            Snake.Instance.moveDir = 'u';
-            Snake.Instance.dirHasChanged = true;
-            movingDown = movingRight = movingLeft = false;
-        }
-        else if (Input.GetAxis("Vertical") < 0 && !movingUp)
-        {
-            movingDown = true;
-            Snake.Instance.moveDir = 'd';
-            Snake.Instance.dirHasChanged = true;
-            movingUp = movingRight = movingLeft = false;
-        }
-        if (inputCounter == 0 && !gameOver)
-        {
-            inputCounter = 1;
-            StartCoroutine(TurnHeadDelayed());
+            if (Input.GetAxis("Horizontal") > 0 && !movingLeft)
+            {
+                movingRight = true;
+                Snake.Instance.moveDir = 'r';
+                Snake.Instance.dirHasChanged = true;
+                movingDown = movingLeft = movingUp = false;
+            }
+            else if (Input.GetAxis("Horizontal") < 0 && !movingRight)
+            {
+                movingLeft = true;
+                Snake.Instance.moveDir = 'l';
+                Snake.Instance.dirHasChanged = true;
+                movingDown = movingRight = movingUp = false;
+            }
+            else if (Input.GetAxis("Vertical") > 0 && !movingDown)
+            {
+                movingUp = true;
+                Snake.Instance.moveDir = 'u';
+                Snake.Instance.dirHasChanged = true;
+                movingDown = movingRight = movingLeft = false;
+            }
+            else if (Input.GetAxis("Vertical") < 0 && !movingUp)
+            {
+                movingDown = true;
+                Snake.Instance.moveDir = 'd';
+                Snake.Instance.dirHasChanged = true;
+                movingUp = movingRight = movingLeft = false;
+            }
+            if (inputCounter == 0)
+            {
+                inputCounter = 1;
+                StartCoroutine(TurnHeadDelayed());
+            }
         }
     }
     void OnCollisionEnter(Collision collision)
@@ -69,10 +70,7 @@ public class Player : MonoBehaviour
         movingUp = false;
         movingLeft = false;
         movingUp = false;
-        gameOver = true;
-        highScore = Score;
-        Score = 0;
-        Debug.Log("Highscore: "+highScore);
+        GameManager.Instance.SwitchState(GameManager.State.GAMEOVER);
     }
 
     IEnumerator TurnHeadDelayed()
@@ -120,5 +118,5 @@ public class Player : MonoBehaviour
     {
         Snake.Instance.snakeHead.transform.position = newPos;
     }
-    
+
 }
