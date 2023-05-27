@@ -71,6 +71,9 @@ public class Player : MonoBehaviour
         movingLeft = false;
         movingUp = false;
         GameManager.Instance.SwitchState(GameManager.State.GAMEOVER);
+        GetComponentInChildren<Head>().xTurnPosition = 100;
+        GetComponentInChildren<Head>().yTurnPosition = 100;
+
     }
 
     IEnumerator TurnHeadDelayed()

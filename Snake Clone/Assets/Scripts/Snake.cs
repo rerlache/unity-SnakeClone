@@ -78,11 +78,63 @@ public class Snake : MonoBehaviour
     }
     void UpdateBodyPartPosition()
     {
+        Head headScript = GetComponentInChildren<Head>();
         for (int i = 1; i < snakePartList.Count; i++)
         {
             GameObject bodyPart = snakePartList[i].gameObject;
-            GameObject prevObj = snakePartList[i - 1].gameObject;
+            Transform prevObj = snakePartList[i - 1].gameObject.transform;
             bodyPart.GetComponent<BodyPart>().headPosition = headTurningPos;
+            bodyPart.GetComponent<BodyPart>().prevItemPosition = prevObj.position;
+            if (headScript.xTurnPosition > bodyPart.GetComponent<BodyPart>().xPos)
+            {
+                bodyPart.GetComponent<BodyPart>().moveRight = true;
+                bodyPart.GetComponent<BodyPart>().moveLeft = false;
+                bodyPart.GetComponent<BodyPart>().xPos = bodyPart.GetComponent<BodyPart>().prevItemPosition.x - 1f;
+            }
+            else if (headScript.xTurnPosition < bodyPart.GetComponent<BodyPart>().xPos)
+            {
+                bodyPart.GetComponent<BodyPart>().moveLeft = true;
+                bodyPart.GetComponent<BodyPart>().moveRight = false;
+                bodyPart.GetComponent<BodyPart>().xPos = bodyPart.GetComponent<BodyPart>().prevItemPosition.x + 1f;
+            }
+            else if (headScript.xTurnPosition == bodyPart.GetComponent<BodyPart>().xPos)
+            {
+                if (headTurningPos.y > bodyPart.GetComponent<BodyPart>().yPos)
+                {
+                    bodyPart.GetComponent<BodyPart>().moveUp = true;
+                    bodyPart.GetComponent<BodyPart>().moveDown = false;
+                }
+                else if (headTurningPos.y < bodyPart.GetComponent<BodyPart>().yPos)
+                {
+                    bodyPart.GetComponent<BodyPart>().moveDown = true;
+                    bodyPart.GetComponent<BodyPart>().moveUp = false;
+                }
+            }
+            else if (headScript.yTurnPosition > bodyPart.GetComponent<BodyPart>().yPos)
+            {
+                bodyPart.GetComponent<BodyPart>().moveUp = true;
+                bodyPart.GetComponent<BodyPart>().moveDown = false;
+                bodyPart.GetComponent<BodyPart>().yPos = bodyPart.GetComponent<BodyPart>().prevItemPosition.y - 1f;
+            }
+            else if (headScript.yTurnPosition < bodyPart.GetComponent<BodyPart>().yPos)
+            {
+                bodyPart.GetComponent<BodyPart>().moveDown = true;
+                bodyPart.GetComponent<BodyPart>().moveUp = false;
+                bodyPart.GetComponent<BodyPart>().yPos = bodyPart.GetComponent<BodyPart>().prevItemPosition.y + 1f;
+            }
+            else if (headScript.yTurnPosition == bodyPart.GetComponent<BodyPart>().yPos)
+            {
+                if (headTurningPos.x > bodyPart.GetComponent<BodyPart>().xPos)
+                {
+                    bodyPart.GetComponent<BodyPart>().moveRight = true;
+                    bodyPart.GetComponent<BodyPart>().moveLeft = false;
+                }
+                else if (headTurningPos.x < bodyPart.GetComponent<BodyPart>().xPos)
+                {
+                    bodyPart.GetComponent<BodyPart>().moveLeft = true;
+                    bodyPart.GetComponent<BodyPart>().moveRight = false;
+                }
+            }
         }
     }
 }

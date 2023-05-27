@@ -28,30 +28,30 @@ public class BodyPart : MonoBehaviour
         if (GameManager.Instance.GameState == GameManager.State.PLAY)
         {
             transform.position = new Vector3(xPos, yPos, 0);
-            MovePart();
-            moveRight = Snake.Instance.moveDir == 'r';
-            moveLeft = Snake.Instance.moveDir == 'l';
-            moveUp = Snake.Instance.moveDir == 'u';
-            moveDown = Snake.Instance.moveDir == 'd';
+            //moveRight = xPos < prevItemPosition.x;
+            //moveLeft = xPos > prevItemPosition.x;
+            //moveUp = yPos < prevItemPosition.y;
+            //moveDown = yPos > prevItemPosition.y;
+            //MovePart();
         }
     }
     void MovePart()
     {
         if (moveRight)
         {
-            xPos = headPosition.x - listPosition;
+            xPos = prevItemPosition.x - 1;
         }
         else if (moveLeft)
         {
-            xPos = headPosition.x + listPosition;
+            xPos = prevItemPosition.x + 1;
         }
         if (moveUp)
         {
-            yPos = headPosition.y - listPosition;
+            yPos = prevItemPosition.y - 1;
         }
         else if (moveDown)
         {
-            yPos = headPosition.y + listPosition;
+            yPos = prevItemPosition.y + 1;
         }
     }
 }

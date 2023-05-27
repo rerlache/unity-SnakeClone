@@ -3627,8 +3627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f29cca774712bad43ac3484899a4d4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xTurnPosition: 0
-  yTurnPosition: 0
+  xTurnPosition: 100
+  yTurnPosition: 100
 --- !u!1 &1589561962
 GameObject:
   m_ObjectHideFlags: 0
