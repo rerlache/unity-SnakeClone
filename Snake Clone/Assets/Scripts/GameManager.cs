@@ -23,9 +23,6 @@ public class GameManager : MonoBehaviour
         Instance = this;
         SwitchState(State.MENU);
     }
-    void Update()
-    {
-    }
     public void SwitchState(State newState, float delay = 0)
     {
         State prevState = GameState;
@@ -33,6 +30,7 @@ public class GameManager : MonoBehaviour
         if (prevState == State.MENU && newState == State.PLAY)
         {
             Player.Instance.movingRight = true;
+            Snake.Instance.moveDir = 'r';
         }
     }
     IEnumerator SwitchDelay(State newState, float delay)

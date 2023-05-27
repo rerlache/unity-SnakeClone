@@ -27,29 +27,29 @@ public class Player : MonoBehaviour
             if (Input.GetAxis("Horizontal") > 0 && !movingLeft)
             {
                 movingRight = true;
+                GetComponentInChildren<BodyPart>().SetPreviousDirection(Snake.Instance.moveDir);
                 Snake.Instance.moveDir = 'r';
-                Snake.Instance.dirHasChanged = true;
                 movingDown = movingLeft = movingUp = false;
             }
             else if (Input.GetAxis("Horizontal") < 0 && !movingRight)
             {
                 movingLeft = true;
+                GetComponentInChildren<BodyPart>().SetPreviousDirection(Snake.Instance.moveDir);
                 Snake.Instance.moveDir = 'l';
-                Snake.Instance.dirHasChanged = true;
                 movingDown = movingRight = movingUp = false;
             }
             else if (Input.GetAxis("Vertical") > 0 && !movingDown)
             {
                 movingUp = true;
+                GetComponentInChildren<BodyPart>().SetPreviousDirection(Snake.Instance.moveDir);
                 Snake.Instance.moveDir = 'u';
-                Snake.Instance.dirHasChanged = true;
                 movingDown = movingRight = movingLeft = false;
             }
             else if (Input.GetAxis("Vertical") < 0 && !movingUp)
             {
                 movingDown = true;
+                GetComponentInChildren<BodyPart>().SetPreviousDirection(Snake.Instance.moveDir);
                 Snake.Instance.moveDir = 'd';
-                Snake.Instance.dirHasChanged = true;
                 movingUp = movingRight = movingLeft = false;
             }
             if (inputCounter == 0)

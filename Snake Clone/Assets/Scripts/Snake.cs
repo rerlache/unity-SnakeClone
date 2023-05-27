@@ -5,18 +5,18 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     public static Snake Instance { get; private set; }
-    [SerializeField] Material bodyMaterial;
+    [SerializeField] GameObject bodyPartPrefab;
     public List<GameObject> snakePartList;
     public GameObject snakeHead;
     public int snakeLength = 3;
     public char moveDir;
     public Vector3 headTurningPos;
-    public bool dirHasChanged;
+    BodyPart bodyPartScript;
     private void Awake()
     {
         Instance = this;
+        bodyPartScript = gameObject.GetComponent<BodyPart>();
     }
-
     void Start()
     {
         snakeHead = snakePartList[0];
@@ -34,14 +34,20 @@ public class Snake : MonoBehaviour
         }
         if (GameManager.Instance.GameState == GameManager.State.PLAY)
         {
-            StartCoroutine(UpdateBodyPartPositionDelayed());
+            UpdateBodyPartPosition();
         }
     }
     void InitSnakePartList()
     {
         for (int i = 0; i < snakeLength; i++)
         {
-            CreateNewBodyPartAndAdd(GetPositionFromPrevious(snakePartList[i].transform.position));
+            GameObject bodyPart = Instantiate(bodyPartPrefab, transform);
+            bodyPart.name = "Part" + i;
+            bodyPart.GetComponent<BodyPart>().listPosition = i + 1;
+            bodyPart.GetComponent<BodyPart>().xPos = -bodyPart.GetComponent<BodyPart>().listPosition;
+            bodyPart.GetComponent<BodyPart>().yPos = 0;
+            bodyPart.GetComponent<BodyPart>().prevItemPosition = snakePartList[snakePartList.Count - 1].transform.position;
+            snakePartList.Add(bodyPart);
         }
     }
     void DestroyBodyPartSphere()
@@ -55,72 +61,28 @@ public class Snake : MonoBehaviour
     {
         snakePartList.RemoveRange(1, snakePartList.Count - 1);
     }
-    void CreateNewBodyPartAndAdd(Vector3 newPos)
-    {
-        GameObject previousPart = snakePartList[snakePartList.Count - 1].gameObject;
-        snakePartList.Add(CreateBodyPart(newPos));
-    }
     public void StretchSnakeAfterEating()
     {
         snakeLength++;
-        GameObject previousPart = snakePartList[snakePartList.Count - 1].gameObject;
-        snakePartList.Add(CreateBodyPart(GetPositionFromPrevious(snakePartList[snakeLength - 1].transform.position)));
+        snakePartList.Add(CreateBodyPartFromPrefab());
     }
-    GameObject CreateBodyPart(Vector3 newPos)
+    GameObject CreateBodyPartFromPrefab()
     {
-        GameObject newBodyPart = CreateNewTile();
-        newBodyPart.transform.name = (transform.childCount + 1).ToString();
-        newBodyPart.GetComponent<Renderer>().material = bodyMaterial;
-        newBodyPart.transform.parent = transform;
-        newBodyPart.transform.position = newPos;
+        float lastIndex = snakePartList.Count;
+        GameObject newBodyPart = Instantiate(bodyPartPrefab, transform);
+        newBodyPart.transform.name = "Part" + (lastIndex).ToString();
+        newBodyPart.GetComponent<BodyPart>().listPosition = lastIndex;
+        newBodyPart.GetComponent<BodyPart>().xPos = -lastIndex;
+        newBodyPart.GetComponent<BodyPart>().prevItemPosition = snakePartList[snakePartList.Count - 1].transform.position;
         return newBodyPart;
-    }
-    GameObject CreateNewTile()
-    {
-        GameObject newTile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        newTile.transform.localScale += new Vector3(0, 0, -0.5f);
-        newTile.AddComponent<SphereCollider>();
-        return newTile;
     }
     void UpdateBodyPartPosition()
     {
         for (int i = 1; i < snakePartList.Count; i++)
         {
-            Vector3 newPos = GetPositionFromPrevious(snakePartList[i - 1].transform.position);
-            if (dirHasChanged)
-            {
-                newPos.x--;
-                newPos.y--;
-                dirHasChanged = false;
-            }
-            snakePartList[i].transform.position = newPos;
+            GameObject bodyPart = snakePartList[i].gameObject;
+            GameObject prevObj = snakePartList[i - 1].gameObject;
+            bodyPart.GetComponent<BodyPart>().headPosition = headTurningPos;
         }
-    }
-    IEnumerator UpdateBodyPartPositionDelayed()
-    {
-        for (int i = 1; i < transform.childCount; i++)
-        {
-            Vector3 newPos = GetPositionFromPrevious(snakePartList[i - 1].transform.position);
-            yield return new WaitForSeconds(Player.DELAYTIME);
-            if (dirHasChanged)
-            {
-                newPos.x--;
-                newPos.y--;
-                dirHasChanged = false;
-            }
-            if (i > 0 && i < snakePartList.Count)
-            {
-                snakePartList[i].transform.position = newPos;
-            }
-            else{Debug.Log("failed because index: " + i);}
-        }
-    }
-    Vector3 GetPositionFromPrevious(Vector3 prevPosition)
-    {
-        int x = ((int)Mathf.Round(prevPosition.x));
-        int y = ((int)Mathf.Round(prevPosition.y));
-        x = moveDir == 'r' ? x-- : moveDir == 'l' ? x++ : x;
-        y = moveDir == 'u' ? y-- : moveDir == 'd' ? y++ : y;
-        return new(x, y, 0);
     }
 }
