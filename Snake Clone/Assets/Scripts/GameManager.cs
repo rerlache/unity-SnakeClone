@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject panelHighscore;
     [SerializeField] GameObject panelGameOver;
     public static GameManager Instance { get; set; }
+    public int fieldHeight = 10, fieldWidth = 20;
+    public float timerValue = .5f;
+    public SnakeLogic snake;
+    float timer;
     State _gameState;
     public State GameState
     {
@@ -23,14 +27,33 @@ public class GameManager : MonoBehaviour
         Instance = this;
         SwitchState(State.MENU);
     }
+    private void Update()
+    {
+        if (GameState == State.PLAY)
+        {
+            if (timer > timerValue)
+            {
+                timer = 0f;
+                Tick();
+            }
+            else
+            {
+                timer += Time.deltaTime;
+            }
+        }
+    }
+    void Tick()
+    {
+        snake.MoveSnake();
+    }
     public void SwitchState(State newState, float delay = 0)
     {
         State prevState = GameState;
         StartCoroutine(SwitchDelay(newState, delay));
         if (prevState == State.MENU && newState == State.PLAY)
         {
-            Player.Instance.movingRight = true;
-            Snake.Instance.moveDir = 'r';
+            snake.head.transform.position = new Vector3(0, 0, 0);
+            snake.direction = new Vector3(1, 0, 0);
         }
     }
     IEnumerator SwitchDelay(State newState, float delay)
@@ -83,6 +106,14 @@ public class GameManager : MonoBehaviour
                 break;
             case State.GAMEOVER:
                 panelGameOver.SetActive(false);
+                for (int i = 0; i < snake.body.Count; i++)
+                {
+                    Destroy(snake.body[i].gameObject);
+                }
+                snake.body.Clear();
+                snake.partPositions.Clear();
+                snake.partPositions.Add(Vector3.zero);
+                snake.snakeSize = 1;
                 break;
             default:
                 break;

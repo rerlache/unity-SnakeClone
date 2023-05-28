@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UI : MonoBehaviour
 {
+    public SnakeLogic snake;
     public static UI Instance { get; private set; }
     public TMPro.TextMeshProUGUI _scoreText;
     public TMPro.TextMeshProUGUI _snakeLengthText;
@@ -22,7 +23,7 @@ public class UI : MonoBehaviour
         }
         if (GameManager.Instance.GameState == GameManager.State.PLAY)
         {
-            _snakeLengthText.text = "Length: " + Snake.Instance.snakeLength;
+            _snakeLengthText.text = "Length: " + snake.body.Count.ToString();
         }
         if (GameManager.Instance.GameState == GameManager.State.GAMEOVER)
         {
